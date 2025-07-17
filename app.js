@@ -618,6 +618,9 @@ onAuthStateChanged(auth, (user) => {
             copyTaxesCheckbox.checked = userData.settings?.copyTaxes ?? true;
             copyTitlesCheckbox.checked = userData.settings?.copyTitles ?? true;
 
+            // Initialize toggle switches
+            initializeToggleSwitches();
+
             // Update opening balance and bank limit inputs in settings modal
             settingsOpeningBalanceInput.value = formatWithCommas(userData.openingBalance || 0);
             settingsBankLimitInput.value = formatWithCommas(userData.bankLimit || 0);
@@ -2748,19 +2751,41 @@ document.getElementById("business-type").addEventListener("change", function () 
 })
 
 // Handle auto-save checkbox
-autoSaveCheckbox.addEventListener("change", () => {
-  if (!cashflowData.settings) cashflowData.settings = {}
-  cashflowData.settings.autoSave = autoSaveCheckbox.checked
-  saveData()
-})
+document.getElementById('auto-save-toggle').addEventListener('click', () => {
+  const checkbox = document.getElementById('auto-save-checkbox');
+  const toggle = document.getElementById('auto-save-toggle');
+  checkbox.checked = !checkbox.checked;
+  toggle.classList.toggle('active', checkbox.checked);
+  
+  if (!cashflowData.settings) cashflowData.settings = {};
+  cashflowData.settings.autoSave = checkbox.checked;
+  saveData();
+});
 
 // Handle auto-alerts checkbox
-autoAlertsCheckbox.addEventListener("change", () => {
-  if (!cashflowData.settings) cashflowData.settings = {}
-  cashflowData.settings.autoAlerts = autoAlertsCheckbox.checked
-  updateAllCalculations() // Run calculations again to update gap alerts
-  saveData()
-})
+document.getElementById('auto-alerts-toggle').addEventListener('click', () => {
+  const checkbox = document.getElementById('auto-alerts-checkbox');
+  const toggle = document.getElementById('auto-alerts-toggle');
+  checkbox.checked = !checkbox.checked;
+  toggle.classList.toggle('active', checkbox.checked);
+  
+  if (!cashflowData.settings) cashflowData.settings = {};
+  cashflowData.settings.autoAlerts = checkbox.checked;
+  updateAllCalculations(); // Run calculations again to update gap alerts
+  saveData();
+});
+
+// Initialize toggle switches
+function initializeToggleSwitches() {
+  const autoSaveToggle = document.getElementById('auto-save-toggle');
+  const autoAlertsToggle = document.getElementById('auto-alerts-toggle');
+  const autoSaveCheckbox = document.getElementById('auto-save-checkbox');
+  const autoAlertsCheckbox = document.getElementById('auto-alerts-checkbox');
+  
+  // Set initial states
+  autoSaveToggle.classList.toggle('active', autoSaveCheckbox.checked);
+  autoAlertsToggle.classList.toggle('active', autoAlertsCheckbox.checked);
+}
 
 // --- AI Chat Logic ---
 aiChatButton.addEventListener("click", () => {
@@ -3023,4 +3048,9 @@ themeToggleBtn.addEventListener('click', () => {
         sunIcon.classList.remove('hidden');
         moonIcon.classList.add('hidden');
     }
+});
+
+// Initialize toggle switches when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    initializeToggleSwitches();
 });
