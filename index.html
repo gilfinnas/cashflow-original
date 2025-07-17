@@ -3,256 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>תזרים מזומנים | CashFlow Simple</title>
+    <title>תזרים מזומנים - מערכת ניהול פיננסי מתקדמת</title>
+    
+    <!-- Add favicon to prevent 404 error -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+    
+    <!-- Use Tailwind Play CDN for development -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Using Inter font as per request for modern typography, similar to SF Pro -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <!-- Font Awesome for icons (sun/moon for theme toggle) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="description" content="מערכת ניהול תזרים מזומנים מתקדמת עם חישובי מע״מ אוטומטיים">
 </head>
-<body class="bg-gradient-to-br from-slate-900 to-slate-800 text-slate-200 font-inter transition-colors duration-500">
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 text-gray-800">
 
-    <!-- Loading Spinner -->
-    <div id="loader" class="fixed inset-0 bg-slate-900 bg-opacity-90 flex items-center justify-center z-50 transition-opacity duration-300">
-        <div class="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-blue-500"></div>
+    <!-- Enhanced Loading Spinner -->
+    <div id="loader" class="fixed inset-0 bg-gradient-to-br from-white/90 to-blue-50/90 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="flex flex-col items-center space-y-4">
+            <div class="relative">
+                <div class="animate-spin rounded-full h-16 w-16 border-4 border-transparent bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"></div>
+                <div class="animate-spin rounded-full h-16 w-16 border-4 border-transparent bg-gradient-to-r from-purple-600 to-blue-500 rounded-full absolute top-0 left-0" style="animation-direction: reverse;"></div>
+            </div>
+            <div class="text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                טוען מערכת...
+            </div>
+        </div>
     </div>
 
-    <!-- Support Button -->
+    <!-- Enhanced Support Button -->
     <a href="mailto:support@gilfinnas.com?subject=בעיה באפליקציית תזרים מזומנים&body=שלום, נתקלתי בבעיה הבאה:" class="support-button no-print" id="supportButton">
-        <i class="fas fa-question-circle ml-2"></i> נתקלתם בבעיה? דברו איתנו
+        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a9.75 9.75 0 109.5 9.75 9.75 9.75 0 00-9.5-9.75z"></path>
+        </svg>
+        צריכים עזרה? דברו איתנו
     </a>
 
-    <!-- START: AI ASSISTANT -->
-    <button id="ai-chat-button" title="עזרה מ-AI" class="ai-chat-button">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" class="theme-toggle no-print" title="החלף מצב תצוגה">
+        <svg class="theme-icon sun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-6.364-.386l1.591-1.591M3 12h2.25m.386-6.364l1.591 1.591M12 8.25a3.75 3.75 0 110 7.5 3.75 3.75 0 010-7.5z" />
+        </svg>
+        <svg class="theme-icon moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+        </svg>
+    </button>
+
+    <!-- Enhanced AI Assistant -->
+    <button id="ai-chat-button" title="עזרה מ-AI" class="group">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8 group-hover:scale-110 transition-transform">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.562L16.25 22.5l-.648-1.938a3.375 3.375 0 00-2.672-2.672L11.25 18l1.938-.648a3.375 3.375 0 002.672-2.672L16.25 13.5l.648 1.938a3.375 3.375 0 002.672 2.672L21 18l-1.938.648a3.375 3.375 0 00-2.672 2.672z" />
         </svg>
     </button>
-    <div id="ai-chat-widget" class="ai-chat-widget">
+    
+    <div id="ai-chat-widget">
         <div class="chat-header">
-            <h3 class="text-slate-800">עוזר AI</h3>
+            <h3>🤖 עוזר AI חכם</h3>
             <button class="chat-close-btn" id="chat-close-btn">&times;</button>
         </div>
         <div class="chat-messages" id="chat-messages">
-            <div class="chat-message assistant">שלום! אני העוזר הדיגיטלי שלך. איך אפשר לעזור היום?</div>
+            <div class="chat-message assistant">
+                שלום! אני העוזר הדיגיטלי החכם שלך 🚀<br>
+                איך אפשר לעזור לך היום עם ניהול התזרים?
+            </div>
         </div>
         <form class="chat-form" id="chat-form">
-            <input type="text" id="chat-input" class="chat-input" placeholder="שאל אותי משהו..." autocomplete="off">
+            <input type="text" id="chat-input" class="chat-input" placeholder="שאל אותי משהו על המערכת..." autocomplete="off">
             <button type="submit" id="chat-send-btn" class="chat-send-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
                 </svg>
             </button>
         </form>
     </div>
-    <!-- END: AI ASSISTANT -->
 
-    <!-- Subscription Banner -->
+    <!-- Enhanced Subscription Banner -->
     <div id="subscription-banner" class="subscription-banner hidden">
-        <span id="banner-text"></span>
-        <button id="banner-button" class="ml-4 bg-white text-blue-600 px-4 py-1 rounded-full font-bold hover:bg-gray-100 transition-colors">
-            לשדרוג לחץ כאן
+        <div class="flex items-center justify-center space-x-4 space-x-reverse">
+            <span id="banner-text" class="font-semibold"></span>
+            <button id="banner-button" class="bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-full font-bold hover:bg-white/30 transition-all duration-300 hover:scale-105">
+                🚀 שדרג עכשיו
+            </button>
+        </div>
+    </div>
+
+    <!-- Enhanced Scroll Navigation -->
+    <div class="scroll-nav hidden lg:flex" id="scroll-nav">
+        <button onclick="scrollTable('up')" title="גלול למעלה" class="group">
+            <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+            </svg>
+        </button>
+        <button onclick="scrollTable('down')" title="גלול למטה" class="group">
+            <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+        </button>
+        <button onclick="scrollTable('left')" title="גלול שמאלה" class="group">
+            <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </button>
+        <button onclick="scrollTable('right')" title="גלול ימינה" class="group">
+            <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
         </button>
     </div>
 
-    <!-- Scroll Navigation -->
-    <div class="scroll-nav hidden lg:flex" id="scroll-nav">
-        <button onclick="scrollTable('up')" title="גלול למעלה">↑</button>
-        <button onclick="scrollTable('down')" title="גלול למטה">↓</button>
-        <button onclick="scrollTable('left')" title="גלול שמאלה">←</button>
-        <button onclick="scrollTable('right')" title="גלול ימינה">→</button>
-    </div>
-
-    <!-- VAT Setup Modal -->
-    <div id="vat-setup-modal" class="modal-overlay hidden">
-        <div class="modal-content !bg-slate-800 !border !border-slate-700 !text-slate-200">
-            <h3 class="modal-title !text-white">הגדרת מע"מ ועסק</h3>
-            <div class="space-y-4">
+    <!-- Enhanced VAT Setup Modal -->
+    <div id="vat-setup-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="glass p-8 rounded-3xl shadow-2xl w-full max-w-md max-h-screen overflow-y-auto m-4">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">הגדרת מע״מ ועסק</h3>
+                <p class="text-gray-600 mt-2">בואו נגדיר את המערכת בהתאם לעסק שלכם</p>
+            </div>
+            <div class="space-y-6">
                 <div>
-                    <label class="block text-sm font-medium mb-2">סוג העסק:</label>
-                    <select id="business-type" class="w-full px-3 py-2 border rounded-lg bg-slate-700 border-slate-600 text-slate-200">
-                        <option value="company">חברה בע"מ</option>
+                    <label class="block text-sm font-semibold mb-3 text-gray-700">סוג העסק:</label>
+                    <select id="business-type" class="w-full px-4 py-3 border-2 border-blue-100 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all">
+                        <option value="company">חברה בע״מ</option>
                         <option value="authorized">עוסק מורשה</option>
                         <option value="exempt">עוסק פטור</option>
                     </select>
                 </div>
                 <div id="vat-settings-section">
                     <div>
-                        <label class="block text-sm font-medium mb-2">תדירות דיווח מע"מ:</label>
-                        <select id="vat-frequency" class="w-full px-3 py-2 border rounded-lg bg-slate-700 border-slate-600 text-slate-200">
+                        <label class="block text-sm font-semibold mb-3 text-gray-700">תדירות דיווח מע״מ:</label>
+                        <select id="vat-frequency" class="w-full px-4 py-3 border-2 border-blue-100 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all">
                             <option value="monthly">חד חודשי</option>
                             <option value="bimonthly">דו חודשי</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-2">באיזה יום בחודש אתה משלם מע"מ?</label>
-                        <input type="number" id="vat-payment-day" class="w-full px-3 py-2 border rounded-lg bg-slate-700 border-slate-600 text-slate-200" min="1" max="31" value="15" placeholder="15">
+                        <label class="block text-sm font-semibold mb-3 text-gray-700">באיזה יום בחודש אתם משלמים מע״מ?</label>
+                        <input type="number" id="vat-payment-day" class="w-full px-4 py-3 border-2 border-blue-100 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all" min="1" max="31" value="15" placeholder="15">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-2">האם בעסק שלך יש הכנסות פטורות ממע"מ?</label>
-                        <select id="has-exempt-income" class="w-full px-3 py-2 border rounded-lg bg-slate-700 border-slate-600 text-slate-200">
+                        <label class="block text-sm font-semibold mb-3 text-gray-700">האם בעסק שלכם יש הכנסות פטורות ממע״מ?</label>
+                        <select id="has-exempt-income" class="w-full px-4 py-3 border-2 border-blue-100 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all">
                             <option value="no">לא</option>
                             <option value="yes">כן</option>
                         </select>
                     </div>
                 </div>
-                <button id="save-vat-settings" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                    שמור הגדרות
+                <button id="save-vat-settings" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                    💾 שמור הגדרות
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Auth Container -->
-    <div id="auth-container" class="hidden min-h-screen flex items-center justify-center">
-        <div class="bg-slate-800 p-8 rounded-xl shadow-2xl w-full max-w-md border border-slate-700">
-            <h2 id="auth-title" class="text-3xl font-bold text-white text-center mb-6">התחברות</h2>
-            <div id="auth-message" class="bg-red-800/30 border border-red-700 text-red-300 px-4 py-3 rounded-lg relative mb-4 hidden" role="alert"></div>
+    <!-- Enhanced Auth Container -->
+    <div id="auth-container" class="hidden min-h-screen flex items-center justify-center p-4">
+        <div class="glass p-8 rounded-3xl shadow-2xl w-full max-w-md">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <h2 id="auth-title" class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">התחברות</h2>
+                <p class="text-gray-600 mt-2">ברוכים הבאים למערכת ניהול התזרים המתקדמת</p>
+            </div>
             
-            <form id="auth-form">
-                <input type="email" id="email" class="w-full px-4 py-3 border rounded-lg mb-4 bg-slate-700 border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200" placeholder="אימייל" required>
-                <input type="password" id="password" class="w-full px-4 py-3 border rounded-lg mb-4 bg-slate-700 border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200" placeholder="סיסמה" required>
+            <div id="auth-message" class="bg-blue-50 border-2 border-blue-200 text-blue-800 px-4 py-3 rounded-xl relative mb-6 hidden" role="alert"></div>
+            
+            <form id="auth-form" class="space-y-6">
+                <div>
+                    <input type="email" id="email" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all" placeholder="כתובת אימייל" required>
+                </div>
+                <div>
+                    <input type="password" id="password" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all" placeholder="סיסמה" required>
+                </div>
                 
-                <div id="terms-container" class="mt-4 hidden">
-                    <label class="flex items-center text-sm">
-                        <input type="checkbox" id="terms-checkbox" class="ml-2 h-4 w-4 text-blue-500 border-slate-600 rounded focus:ring-blue-500 bg-slate-700">
-                        <span class="text-slate-400">קראתי ואני מסכים ל<a href="#" target="_blank" class="text-blue-400 hover:underline mx-1">תנאי השימוש</a> ול<a href="#" target="_blank" class="text-blue-400 hover:underline mx-1">מדיניות הפרטיות</a>.</span>
+                <div id="terms-container" class="mt-6 hidden">
+                    <label class="flex items-start text-sm space-x-3 space-x-reverse">
+                        <input type="checkbox" id="terms-checkbox" class="mt-1 h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                        <span class="text-gray-700 leading-relaxed">
+                            קראתי ואני מסכים ל<a href="#" target="_blank" class="text-blue-600 hover:underline font-semibold">תנאי השימוש</a> 
+                            ול<a href="#" target="_blank" class="text-blue-600 hover:underline font-semibold">מדיניות הפרטיות</a>
+                        </span>
                     </label>
                 </div>
 
-                <button type="submit" id="auth-submit-btn" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg hover:from-blue-700 hover:to-purple-700 mt-6 font-semibold text-lg shadow-lg transition-all duration-200">התחבר</button>
+                <button type="submit" id="auth-submit-btn" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 rounded-xl hover:from-blue-700 hover:to-purple-700 font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg">
+                    🚀 התחבר
+                </button>
             </form>
             
-            <div class="text-center mt-6 text-sm flex justify-between">
-                <a href="#" id="forgot-password-link" class="text-slate-400 hover:text-slate-300 hover:underline transition-colors duration-200">שכחת סיסמה?</a>
-                <a href="#" id="toggle-auth-mode" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors duration-200">אין לך חשבון? הירשם כאן</a>
+            <div class="text-center mt-6 text-sm flex justify-between items-center">
+                <a href="#" id="forgot-password-link" class="text-gray-600 hover:text-blue-600 transition-colors">שכחת סיסמה?</a>
+                <a href="#" id="toggle-auth-mode" class="text-blue-600 hover:text-blue-800 font-semibold transition-colors">אין לך חשבון? הירשם כאן</a>
             </div>
         </div>
     </div>
 
-    <!-- App Container -->
+    <!-- Enhanced App Container -->
     <div id="app-container" class="hidden container mx-auto p-4 md:p-8">
-        <header class="mb-8 text-center no-print flex flex-col sm:flex-row justify-between items-center relative">
-            <!-- Theme Toggle Button (Sun/Moon icon) -->
-            <button id="theme-toggle" class="absolute top-0 left-0 p-2 rounded-full bg-slate-700 hover:bg-slate-600 text-slate-300 transition-colors duration-200">
-                <i class="fas fa-sun text-xl" id="sun-icon"></i>
-                <i class="fas fa-moon text-xl hidden" id="moon-icon"></i>
-            </button>
-
-            <div class="flex flex-col sm:flex-row gap-2 mb-4 sm:mb-0">
-                 <button id="logout-btn" class="action-button bg-red-600 hover:bg-red-700 text-white">
-                    <i class="fas fa-sign-out-alt ml-2"></i> התנתק
-                 </button>
-                 <button id="header-save-btn" class="action-button bg-green-600 hover:bg-green-700 text-white">
-                    <i class="fas fa-save ml-2"></i> שמור
-                 </button>
-                 <button id="settings-btn" class="action-button bg-slate-600 hover:bg-slate-700 text-white">
-                    <i class="fas fa-cog ml-2"></i> הגדרות
-                 </button>
-                 <button id="dashboard-btn" class="action-button bg-purple-600 hover:bg-purple-700 text-white">
-                    <i class="fas fa-chart-line ml-2"></i> דשבורד ניהולי
-                 </button>
+        <!-- Enhanced Header -->
+        <header class="mb-8 text-center no-print">
+            <div class="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
+                <!-- Left Controls -->
+                <div class="flex flex-wrap gap-3">
+                    <button id="logout-btn" class="bg-gradient-to-r from-red-500 to-red-600 text-white py-2 px-4 rounded-xl text-sm font-semibold hover:from-red-600 hover:to-red-700 transition-all hover:scale-105">
+                        🚪 התנתק
+                    </button>
+                    <button id="header-save-btn" class="bg-gradient-to-r from-green-500 to-green-600 text-white py-2 px-4 rounded-xl text-sm font-semibold hover:from-green-600 hover:to-green-700 transition-all hover:scale-105">
+                        💾 שמור
+                    </button>
+                    <button id="settings-btn" class="bg-gradient-to-r from-gray-500 to-gray-600 text-white py-2 px-4 rounded-xl text-sm font-semibold hover:from-gray-600 hover:to-gray-700 transition-all hover:scale-105">
+                        ⚙️ הגדרות
+                    </button>
+                    <button id="dashboard-btn" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white py-2 px-4 rounded-xl text-sm font-semibold hover:from-purple-600 hover:to-purple-700 transition-all hover:scale-105">
+                        📊 דשבורד ניהולי
+                    </button>
+                </div>
+                
+                <!-- Center Title -->
+                <div class="flex-grow text-center">
+                    <div class="year-nav justify-center mb-4">
+                        <button id="prev-year-btn" class="nav-button">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                        <h2 id="current-year-display" class="text-2xl font-bold mx-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"></h2>
+                        <button id="next-year-btn" class="nav-button">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent mb-4">
+                        תזרים מזומנים יומי
+                    </h1>
+                    <input type="text" id="clientName" placeholder="הקלד שם לקוח כאן" class="mt-4 text-center text-lg">
+                </div>
+                
+                <!-- Right Controls -->
+                <button id="todayButtonHeader" class="bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white font-bold py-3 px-6 rounded-xl text-sm transition-all hover:scale-105 hover:shadow-lg">
+                    📅 היום (<span id="todayDateDisplay" class="font-bold"></span>)
+                </button>
             </div>
-            <div class="flex-grow">
-                 <div class="year-nav justify-center">
-                     <button id="prev-year-btn" class="nav-button">
-                        <i class="fas fa-chevron-right"></i>
-                     </button>
-                     <h2 id="current-year-display" class="text-xl font-bold mx-4 text-white"></h2>
-                     <button id="next-year-btn" class="nav-button">
-                        <i class="fas fa-chevron-left"></i>
-                     </button>
-                 </div>
-                 <h1 class="text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">תזרים מזומנים יומי</h1>
-                 <input type="text" id="clientName" placeholder="הקלד שם לקוח כאן" class="mt-2 text-center text-xl font-semibold bg-slate-700 border-slate-600 text-white placeholder-slate-400 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
-            </div>
-            <button id="todayButtonHeader" class="action-button bg-yellow-500 hover:bg-yellow-600 text-white">
-                <i class="fas fa-calendar-day ml-2"></i> היום (<span id="todayDateDisplay"></span>)
-            </button>
         </header>
         
+        <!-- Enhanced Dashboard Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 no-print">
             <!-- Card 1: Monthly Balance -->
-            <div class="summary-card flex flex-col justify-between p-0 overflow-hidden bg-slate-800/60 border border-slate-700 rounded-xl shadow-lg">
-                <div class="flex-1 flex flex-col justify-center items-center text-center p-4 border-b border-slate-700">
-                    <h4 class="text-sm font-semibold text-slate-400">הכנסות (חודשי)</h4>
-                    <p id="dashboard-income" class="text-2xl lg:text-3xl font-bold text-green-400">0 ₪</p>
+            <div class="summary-card group hover:scale-105">
+                <div class="flex-1 flex flex-col justify-center items-center text-center p-4 border-b border-gray-100">
+                    <h4 class="text-sm font-semibold text-gray-500 mb-2">💰 הכנסות חודשיות</h4>
+                    <p id="dashboard-income" class="text-2xl lg:text-3xl font-bold text-green-600">0 ₪</p>
                 </div>
-                <div class="flex-1 flex flex-col justify-center items-center text-center p-4 border-b border-slate-700">
-                    <h4 class="text-sm font-semibold text-slate-400">הוצאות (חודשי)</h4>
-                    <p id="dashboard-expense" class="text-2xl lg:text-3xl font-bold text-red-400">0 ₪</p>
+                <div class="flex-1 flex flex-col justify-center items-center text-center p-4 border-b border-gray-100">
+                    <h4 class="text-sm font-semibold text-gray-500 mb-2">💸 הוצאות חודשיות</h4>
+                    <p id="dashboard-expense" class="text-2xl lg:text-3xl font-bold text-red-600">0 ₪</p>
                 </div>
                 <div class="flex-1 flex flex-col justify-center items-center text-center p-4">
-                    <h4 class="text-sm font-semibold text-slate-400">מאזן (חודשי)</h4>
-                    <p id="dashboard-balance" class="text-2xl lg:text-3xl font-bold text-blue-400">0 ₪</p>
+                    <h4 class="text-sm font-semibold text-gray-500 mb-2">⚖️ מאזן חודשי</h4>
+                    <p id="dashboard-balance" class="text-2xl lg:text-3xl font-bold">0 ₪</p>
                 </div>
             </div>
             
             <!-- Card 2: Salaries -->
-            <div class="summary-card flex flex-col justify-between p-0 overflow-hidden bg-slate-800/60 border border-slate-700 rounded-xl shadow-lg">
-                 <div class="flex-1 flex flex-col justify-center items-center text-center p-4 border-b border-slate-700">
-                    <h4 class="text-sm font-semibold text-slate-400">עלות שכר עבודה (חודשי)</h4>
-                    <p id="dashboard-employee-wages" class="text-2xl lg:text-3xl font-bold text-red-400">0 ₪</p>
+            <div class="summary-card group hover:scale-105">
+                <div class="flex-1 flex flex-col justify-center items-center text-center p-4 border-b border-gray-100">
+                    <h4 class="text-sm font-semibold text-gray-500 mb-2">👥 עלות שכר עבודה</h4>
+                    <p id="dashboard-employee-wages" class="text-2xl lg:text-3xl font-bold text-red-600">0 ₪</p>
                 </div>
-                <div class="flex-1 flex flex-col justify-center items-center text-center p-4 border-b border-slate-700">
-                    <h4 id="owner-cost-label" class="text-sm font-semibold text-slate-400">שכר בעלים/שליטה (חודשי)</h4>
-                    <p id="dashboard-owner-wages" class="text-2xl lg:text-3xl font-bold text-red-400">0 ₪</p>
+                <div class="flex-1 flex flex-col justify-center items-center text-center p-4 border-b border-gray-100">
+                    <h4 id="owner-cost-label" class="text-sm font-semibold text-gray-500 mb-2">👤 שכר בעלים/שליטה</h4>
+                    <p id="dashboard-owner-wages" class="text-2xl lg:text-3xl font-bold text-red-600">0 ₪</p>
                 </div>
                 <div class="flex-1 flex flex-col justify-center items-center text-center p-4">
-                    <h4 class="text-sm font-semibold text-slate-400">עלות משכורות כוללת</h4>
-                    <p id="dashboard-total-wages" class="text-2xl lg:text-3xl font-bold text-red-400">0 ₪</p>
+                    <h4 class="text-sm font-semibold text-gray-500 mb-2">💼 עלות משכורות כוללת</h4>
+                    <p id="dashboard-total-wages" class="text-2xl lg:text-3xl font-bold text-red-600">0 ₪</p>
                 </div>
             </div>
             
             <!-- Card 3: Loans -->
-            <div class="summary-card flex flex-col justify-between p-0 overflow-hidden bg-slate-800/60 border border-slate-700 rounded-xl shadow-lg">
-                <div class="flex-1 flex flex-col justify-center items-center text-center p-4 border-b border-slate-700">
-                    <h4 class="text-sm font-semibold text-slate-400">עלות הלוואות (חודשי)</h4>
-                    <p id="dashboard-total-loans" class="text-2xl lg:text-3xl font-bold text-red-400">0 ₪</p>
+            <div class="summary-card group hover:scale-105">
+                <div class="flex-1 flex flex-col justify-center items-center text-center p-4 border-b border-gray-100">
+                    <h4 class="text-sm font-semibold text-gray-500 mb-2">🏦 עלות הלוואות חודשית</h4>
+                    <p id="dashboard-total-loans" class="text-2xl lg:text-3xl font-bold text-red-600">0 ₪</p>
                 </div>
-                <div class="flex-1 flex flex-col justify-center items-center text-center p-4 border-b border-slate-700">
-                    <h4 class="text-sm font-semibold text-slate-400">הלוואות ששולמו</h4>
-                    <p id="dashboard-paid-loans" class="text-2xl lg:text-3xl font-bold text-green-400">0 ₪</p>
+                <div class="flex-1 flex flex-col justify-center items-center text-center p-4 border-b border-gray-100">
+                    <h4 class="text-sm font-semibold text-gray-500 mb-2">✅ הלוואות ששולמו</h4>
+                    <p id="dashboard-paid-loans" class="text-2xl lg:text-3xl font-bold text-green-600">0 ₪</p>
                 </div>
                 <div class="flex-1 flex flex-col justify-center items-center text-center p-4">
-                    <h4 class="text-sm font-semibold text-slate-400">נותר לשלם (עד סוף חודש)</h4>
-                    <p id="dashboard-remaining-loans" class="text-2xl lg:text-3xl font-bold text-red-400">0 ₪</p>
+                    <h4 class="text-sm font-semibold text-gray-500 mb-2">⏳ נותר לשלם</h4>
+                    <p id="dashboard-remaining-loans" class="text-2xl lg:text-3xl font-bold text-red-600">0 ₪</p>
                 </div>
             </div>
 
             <!-- Card 4: Opening Balance -->
-            <div class="summary-card bg-slate-800/60 border border-slate-700 rounded-xl shadow-lg p-6 flex flex-col justify-between">
-                <div>
-                    <h3 class="font-semibold text-slate-400 text-sm text-center mb-3">יתרת פתיחה שנתית</h3>
-                    <div class="equal-inputs mt-2">
-                        <input type="text" inputmode="decimal" id="openingBalance" class="formatted-number-input text-lg font-bold text-white bg-slate-700 border-slate-600 placeholder-slate-400 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200" value="10,000">
+            <div class="summary-card group hover:scale-105">
+                <div class="text-center">
+                    <h3 class="font-semibold text-gray-500 text-sm mb-4">🏛️ יתרת פתיחה שנתית</h3>
+                    <div class="mb-4">
+                        <input type="text" inputmode="decimal" id="openingBalance" class="formatted-number-input text-xl font-bold text-center w-full" value="10,000">
                     </div>
-                </div>
-                <div class="mt-4">
-                    <label class="text-xs text-slate-400 text-center block mb-1">מסגרת בנק (אופציונלי):</label>
-                    <div class="equal-inputs">
-                        <input type="text" inputmode="decimal" id="bankLimit" class="formatted-number-input text-sm text-white bg-slate-700 border-slate-600 placeholder-slate-400 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200" placeholder="0">
+                    <div>
+                        <label class="text-xs text-gray-500 block mb-2">💳 מסגרת בנק (אופציונלי):</label>
+                        <input type="text" inputmode="decimal" id="bankLimit" class="formatted-number-input text-sm w-full text-center" placeholder="0">
                     </div>
                 </div>
             </div>
         </div>
         
-        <div class="mb-6 bg-slate-800/60 p-2 rounded-xl shadow-lg overflow-x-auto no-print border border-slate-700">
-            <nav id="month-tabs" class="flex space-x-1 md:space-x-2 space-x-reverse justify-center"></nav>
+        <!-- Enhanced Month Tabs -->
+        <div class="mb-8 glass p-4 rounded-2xl overflow-x-auto no-print">
+            <nav id="month-tabs" class="flex space-x-2 space-x-reverse justify-center min-w-max"></nav>
         </div>
 
-        <div class="hidden lg:block bg-slate-800/60 rounded-xl shadow-lg overflow-hidden main-table-container relative no-print border border-slate-700">
-            <!-- START: Fullscreen Button -->
-            <button id="toggle-fullscreen-btn" title="הצג מסך מלא" class="absolute top-4 left-4 z-20 p-2 bg-slate-700 rounded-full hover:bg-slate-600 text-slate-300 transition-colors duration-200">
-                <svg id="expand-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <!-- Enhanced Main Table -->
+        <div class="hidden lg:block glass rounded-2xl overflow-hidden main-table-container relative no-print">
+            <!-- Fullscreen Button -->
+            <button id="toggle-fullscreen-btn" title="הצג מסך מלא" class="absolute top-4 left-4 z-20 p-3 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white/90 transition-all hover:scale-110 group">
+                <svg id="expand-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700 group-hover:text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 1v4m0 0h-4m4 0l-5-5" />
                 </svg>
-                <svg id="collapse-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <svg id="collapse-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700 group-hover:text-blue-600 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l-5 5m0 0v-4m0 4h4m1-11l5-5m0 0v4m0-4h-4m-1 11l5 5m0 0v-4m0 4h-4m-7-1l-5-5m0 0v4m0-4h4" />
                 </svg>
             </button>
-            <!-- END: Fullscreen Button -->
+            
             <div class="table-container" id="table-container">
                 <table class="w-full text-sm text-center border-collapse">
                     <thead id="table-head"></thead>
@@ -262,158 +354,260 @@
             </div>
         </div>
         
-        <div class="block lg:hidden bg-slate-800/60 rounded-xl shadow-lg overflow-hidden no-print border border-slate-700" id="mobile-view-container"></div>
+        <!-- Enhanced Mobile View -->
+        <div class="block lg:hidden glass rounded-2xl overflow-hidden no-print" id="mobile-view-container"></div>
 
-        <div class="mt-8 flex flex-wrap justify-center items-center gap-4 md:gap-6 no-print">
-             <button id="saveButton" class="action-button bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white">
-                <i class="fas fa-check-circle ml-2"></i> שמור
-             </button>
-             <button id="todayButton" class="action-button bg-gradient-to-r from-slate-500 to-slate-600 hover:from-slate-600 hover:to-slate-700 text-white">
-                <i class="fas fa-calendar-day ml-2"></i> היום
-             </button>
-             <button id="copyFixedButton" class="action-button bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-indigo-600 hover:to-violet-700 text-white">
-                <i class="fas fa-copy ml-2"></i> העתק קבועות
-             </button>
-             <button id="copyTaxesButton" class="action-button bg-gradient-to-r from-purple-500 to-fuchsia-600 hover:from-purple-600 hover:to-fuchsia-700 text-white">
-                <i class="fas fa-file-invoice-dollar ml-2"></i> העתק מיסים
-             </button>
-             <button id="copyTitlesButton" class="action-button bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white">
-                <i class="fas fa-pen-nib ml-2"></i> העתק כותרות
-             </button>
-             <button id="printButton" class="action-button bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white">
-                <i class="fas fa-print ml-2"></i> הדפס / PDF
-             </button>
-             <button id="resetButton" class="action-button bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white">
-                <i class="fas fa-undo ml-2"></i> אפס חודש
-             </button>
-             <button id="cashflowGapButton" class="action-button bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white">
-                <i class="fas fa-exclamation-triangle ml-2"></i> בדיקת פער תזרימי
-             </button>
+        <!-- Enhanced Action Buttons -->
+        <div class="mt-8 flex flex-wrap justify-center items-center gap-4 no-print">
+            <button id="saveButton" class="action-button bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                שמור
+            </button>
+            <button id="todayButton" class="action-button bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0h18" />
+                </svg>
+                היום
+            </button>
+            <button id="copyFixedButton" class="action-button bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m4.5 10.5h4.5m-4.5 3h4.5m-4.5 3h4.5" />
+                </svg>
+                העתק קבועות
+            </button>
+            <button id="copyTaxesButton" class="action-button bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 14.25l6-6m4.5-3.493V21.75l-3.75-1.5-3.75 1.5-3.75-1.5-3.75 1.5V4.757c0-1.108.816-2.08 1.962-2.333l7.5-1.667c.97-.215 1.995.563 2.24 1.534z" />
+                </svg>
+                העתק מיסים
+            </button>
+            <button id="copyTitlesButton" class="action-button bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                </svg>
+                העתק כותרות
+            </button>
+            <button id="printButton" class="action-button bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6 18.25M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+                הדפס / PDF
+            </button>
+            <button id="resetButton" class="action-button bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0011.664 0l3.181-3.183" />
+                </svg>
+                אפס חודש
+            </button>
+            <button id="cashflowGapButton" class="action-button bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+                בדיקת פער תזרימי
+            </button>
         </div>
 
-        <!-- Contact Footer -->
-        <div class="contact-footer no-print bg-slate-800/60 border border-slate-700 rounded-xl shadow-lg text-slate-300">
-            <h3 class="text-xl font-bold mb-2 text-white">צור קשר</h3>
-            <p class="text-slate-400 mb-3">יש לכם שאלות או הצעות לשיפור?</p>
-            <a href="mailto:support@gilfinnas.com?subject=פנייה מאפליקציית תזרים מזומנים&body=שלום," class="contact-link text-blue-400 hover:text-blue-300">
-                <i class="fas fa-envelope ml-2"></i> שלחו לנו מייל
-            </a>
-        </div>
-    </div>
-    
-    <!-- Settings Modal -->
-    <div id="settings-modal" class="modal-overlay hidden">
-        <div class="modal-content !bg-slate-800 !border !border-slate-700 !text-slate-200">
-            <h3 class="modal-title !text-white">הגדרות</h3>
-            <div class="mt-4 border-b border-slate-700 pb-4">
-                 <label class="flex items-center cursor-pointer">
-                     <div class="relative">
-                         <input type="checkbox" id="auto-save-checkbox" class="sr-only">
-                         <div class="block bg-slate-700 w-14 h-8 rounded-full"></div>
-                         <div class="dot absolute left-1 top-1 bg-slate-400 w-6 h-6 rounded-full transition-all duration-300"></div>
-                     </div>
-                     <div class="ml-3 text-slate-300 font-medium">
-                         שמירת נתונים אוטומטית
-                     </div>
-                 </label>
-                 <p class="text-xs text-slate-500 mt-1 mr-4">השינויים יישמרו אוטומטית 2 שניות לאחר ההקלדה.</p>
-            </div>
-            <div class="mt-4 border-b border-slate-700 pb-4">
-                 <label class="flex items-center cursor-pointer">
-                     <div class="relative">
-                         <input type="checkbox" id="auto-alerts-checkbox" class="sr-only">
-                         <div class="block bg-slate-700 w-14 h-8 rounded-full"></div>
-                         <div class="dot absolute left-1 top-1 bg-slate-400 w-6 h-6 rounded-full transition-all duration-300"></div>
-                     </div>
-                     <div class="ml-3 text-slate-300 font-medium">
-                         התראות תזרים אוטומטיות
-                     </div>
-                 </label>
-                 <p class="text-xs text-slate-500 mt-1 mr-4">הצג סימן אזהרה בימים עם חריגה צפויה.</p>
-            </div>
-            <div id="change-password-section" class="mt-4 border-b border-slate-700 pb-4">
-                 <p class="text-sm font-semibold mb-2 text-white">שינוי סיסמה</p>
-                 <input type="password" id="new-password" class="w-full px-3 py-2 border rounded bg-slate-700 border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200" placeholder="סיסמה חדשה">
-                 <input type="password" id="confirm-password" class="w-full mt-2 px-3 py-2 border rounded bg-slate-700 border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200" placeholder="אשר סיסמה חדשה">
-                 <button id="change-password-btn" class="w-full mt-3 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors duration-200">שנה סיסמה</button>
-            </div>
-            <div id="2fa-setup" class="mt-4 border-b border-slate-700 pb-4">
-                 <p class="text-sm font-semibold mb-2 text-white">אימות דו-שלבי</p>
-                 <div id="phone-number-display" class="mb-2 p-2 bg-green-800/30 text-green-300 rounded-lg hidden">
-                     <span class="font-semibold">מספר מאומת: </span><span id="verified-phone"></span>
-                 </div>
-                 <input type="tel" id="phone-number" class="w-full px-3 py-2 border rounded bg-slate-700 border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200" placeholder="מספר טלפון (לדוגמה: +972501234567)">
-                 <div id="recaptcha-container" class="my-3"></div>
-                 <button id="send-verification-code" class="w-full mt-2 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors duration-200">שלח קוד אימות</button>
-                 <div id="verification-code-area" class="hidden mt-3">
-                     <input type="text" id="verification-code" class="w-full px-3 py-2 border rounded bg-slate-700 border-slate-600 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200" placeholder="קוד אימות בן 6 ספרות" maxlength="6">
-                     <button id="verify-phone" class="w-full mt-2 bg-green-600 text-white py-2 rounded hover:bg-green-700 transition-colors duration-200">אמת מספר טלפון</button>
-                 </div>
-                 <button id="remove-2fa" class="w-full mt-2 bg-red-600 text-white py-2 rounded hover:bg-red-700 transition-colors duration-200 hidden">הסר אימות דו-שלבי</button>
-            </div>
-            <div id="vat-settings-section-in-modal" class="mt-4 border-b border-slate-700 pb-4">
-                 <p class="text-sm font-semibold mb-2 text-white">הגדרות מע"מ</p>
-                 <button id="edit-vat-settings" class="w-full bg-yellow-600 text-white py-2 rounded hover:bg-yellow-700 transition-colors duration-200">ערוך הגדרות מע"מ</button>
-            </div>
-            <!-- New Category Management Section -->
-            <div id="category-management-section" class="mt-4 pt-4">
-                <h4 class="text-sm font-semibold mb-2 text-white">ניהול קטגוריות</h4>
-                <button id="edit-categories-btn" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors duration-200">ערוך קטגוריות</button>
-            </div>
-            <div class="mt-6 text-center">
-                 <button id="close-settings" class="px-4 py-2 bg-slate-700 text-slate-200 rounded hover:bg-slate-600 transition-colors duration-200">סגור</button>
+        <!-- Enhanced Contact Footer -->
+        <div class="contact-footer no-print">
+            <div class="text-center">
+                <h3 class="text-xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">💬 צור קשר</h3>
+                <p class="text-gray-600 mb-4">יש לכם שאלות או הצעות לשיפור?</p>
+                <a href="mailto:support@gilfinnas.com?subject=פנייה מאפליקציית תזרים מזומנים&body=שלום," class="contact-link">
+                    📧 שלחו לנו מייל
+                </a>
             </div>
         </div>
     </div>
     
-    <!-- Category Editor Modal -->
-    <div id="category-editor-modal" class="modal-overlay hidden">
-        <div class="modal-content !bg-slate-800 !border !border-slate-700 !text-slate-200">
-            <h3 class="modal-title !text-white">עריכת קטגוריות</h3>
-            <div id="category-editor-container" class="space-y-4 max-h-96 overflow-y-auto pr-2">
+    <!-- Enhanced Settings Modal -->
+    <div id="settings-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-40">
+        <div class="relative top-20 mx-auto p-8 border-0 w-96 max-w-md shadow-2xl rounded-3xl glass">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">הגדרות מערכת</h3>
+            </div>
+            
+            <!-- Auto Save Toggle -->
+            <div class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100">
+                <label class="flex items-center cursor-pointer">
+                    <div class="relative">
+                        <input type="checkbox" id="auto-save-checkbox" class="sr-only">
+                        <div class="block bg-gray-400 w-14 h-8 rounded-full transition-all duration-300"></div>
+                        <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-all duration-300 shadow-md"></div>
+                    </div>
+                    <div class="ml-4">
+                        <div class="text-gray-800 font-semibold">💾 שמירת נתונים אוטומטית</div>
+                        <p class="text-xs text-gray-600 mt-1">השינויים יישמרו אוטומטית 2 שניות לאחר ההקלדה</p>
+                    </div>
+                </label>
+            </div>
+            
+            <!-- Auto Alerts Toggle -->
+            <div class="mb-6 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-100">
+                <label class="flex items-center cursor-pointer">
+                    <div class="relative">
+                        <input type="checkbox" id="auto-alerts-checkbox" class="sr-only">
+                        <div class="block bg-gray-400 w-14 h-8 rounded-full transition-all duration-300"></div>
+                        <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-all duration-300 shadow-md"></div>
+                    </div>
+                    <div class="ml-4">
+                        <div class="text-gray-800 font-semibold">🚨 התראות תזרים אוטומטיות</div>
+                        <p class="text-xs text-gray-600 mt-1">הצג סימן אזהרה בימים עם חריגה צפויה</p>
+                    </div>
+                </label>
+            </div>
+            
+            <!-- Password Change Section -->
+            <div class="mb-6 p-4 bg-gradient-to-r from-green-50 to-teal-50 rounded-xl border border-green-100">
+                <p class="text-sm font-semibold mb-3 text-gray-800">🔐 שינוי סיסמה</p>
+                <div class="space-y-3">
+                    <input type="password" id="new-password" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all" placeholder="סיסמה חדשה">
+                    <input type="password" id="confirm-password" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:ring-4 focus:ring-green-100 transition-all" placeholder="אשר סיסמה חדשה">
+                    <button id="change-password-btn" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-xl hover:from-green-600 hover:to-green-700 font-semibold transition-all hover:scale-105">
+                        🔄 שנה סיסמה
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 2FA Setup Section -->
+            <div class="mb-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100">
+                <p class="text-sm font-semibold mb-3 text-gray-800">🛡️ אימות דו-שלבי</p>
+                <div id="phone-number-display" class="mb-3 p-3 bg-green-100 rounded-xl hidden">
+                    <span class="text-green-800 font-semibold">✅ מספר מאומת: </span> 
+                    <span id="verified-phone" class="font-mono"></span>
+                </div>
+                <div class="space-y-3">
+                    <input type="tel" id="phone-number" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all" placeholder="מספר טלפון (לדוגמה: +972501234567)">
+                    <div id="recaptcha-container" class="my-3"></div>
+                    <button id="send-verification-code" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white py-3 rounded-xl hover:from-purple-600 hover:to-purple-700 font-semibold transition-all hover:scale-105">
+                        📱 שלח קוד אימות
+                    </button>
+                    <div id="verification-code-area" class="hidden space-y-3">
+                        <input type="text" id="verification-code" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all" placeholder="קוד אימות בן 6 ספרות" maxlength="6">
+                        <button id="verify-phone" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-xl hover:from-green-600 hover:to-green-700 font-semibold transition-all hover:scale-105">
+                            ✅ אמת מספר טלפון
+                        </button>
+                    </div>
+                    <button id="remove-2fa" class="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-3 rounded-xl hover:from-red-600 hover:to-red-700 font-semibold transition-all hover:scale-105 hidden">
+                        🗑️ הסר אימות דו-שלבי
+                    </button>
+                </div>
+            </div>
+            
+            <!-- VAT Settings Section -->
+            <div class="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                <p class="text-sm font-semibold mb-3 text-gray-800">📊 הגדרות מע״מ</p>
+                <button id="edit-vat-settings" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-xl hover:from-blue-600 hover:to-blue-700 font-semibold transition-all hover:scale-105">
+                    ⚙️ ערוך הגדרות מע״מ
+                </button>
+            </div>
+            
+            <!-- Category Management Section -->
+            <div class="mb-6 p-4 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl border border-orange-100">
+                <h4 class="text-sm font-semibold mb-3 text-gray-800">📝 ניהול קטגוריות</h4>
+                <button id="edit-categories-btn" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-xl hover:from-orange-600 hover:to-orange-700 font-semibold transition-all hover:scale-105">
+                    ✏️ ערוך קטגוריות
+                </button>
+            </div>
+            
+            <div class="text-center">
+                <button id="close-settings" class="px-8 py-3 bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-xl hover:from-gray-500 hover:to-gray-600 font-semibold transition-all hover:scale-105">
+                    ✖️ סגור
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Enhanced Category Editor Modal -->
+    <div id="category-editor-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto h-full w-full z-40">
+        <div class="relative top-20 mx-auto p-8 border-0 w-full max-w-4xl shadow-2xl rounded-3xl glass m-4">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">עריכת קטגוריות</h3>
+                <p class="text-gray-600 mt-2">ערוך, הוסף או מחק קטגוריות בהתאם לצרכים שלך</p>
+            </div>
+            
+            <div id="category-editor-container" class="space-y-6 max-h-96 overflow-y-auto">
                 <!-- Categories will be rendered here by JS -->
             </div>
-            <div class="mt-6 flex justify-end gap-3">
-                <button id="cancel-category-edit" class="px-4 py-2 bg-slate-700 text-slate-200 rounded hover:bg-slate-600 transition-colors duration-200">ביטול</button>
-                <button id="save-category-changes" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors duration-200">שמור שינויים</button>
+            
+            <div class="mt-8 flex justify-end gap-4">
+                <button id="cancel-category-edit" class="px-6 py-3 bg-gradient-to-r from-gray-400 to-gray-500 text-white rounded-xl hover:from-gray-500 hover:to-gray-600 font-semibold transition-all hover:scale-105">
+                    ❌ ביטול
+                </button>
+                <button id="save-category-changes" class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 font-semibold transition-all hover:scale-105">
+                    💾 שמור שינויים
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Subscription Expired Modal -->
-    <div id="subscription-modal" class="modal-overlay hidden">
-        <div class="modal-content !bg-slate-800 !border !border-slate-700 !text-slate-200 text-center">
-            <h3 class="modal-title !text-red-400">המנוי שלך פג</h3>
-            <p class="modal-body !text-slate-300 mb-6">הגישה שלך לאפליקציה הסתיימה. כדי להמשיך ליהנות מהשירות, אנא שדרג את המנוי שלך.</p>
-            <button id="upgrade-now-btn" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-lg hover:from-green-600 hover:to-emerald-700 font-bold text-lg mb-3 transition-all duration-200">
+    <!-- Enhanced Subscription Modal -->
+    <div id="subscription-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="glass p-8 rounded-3xl shadow-2xl w-full max-w-md text-center m-4">
+            <div class="w-20 h-20 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <h3 class="text-3xl font-bold mb-4 bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">המנוי שלך פג</h3>
+            <p class="mb-8 text-gray-600 leading-relaxed">הגישה שלך לאפליקציה הסתיימה. כדי להמשיך ליהנות מהשירות המתקדם, אנא שדרג את המנוי שלך.</p>
+            <button id="upgrade-now-btn" class="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-4 rounded-xl hover:from-green-600 hover:to-green-700 font-bold text-lg mb-4 transition-all hover:scale-105 hover:shadow-lg">
                 🚀 שדרג עכשיו
             </button>
-            <button id="logout-from-expired" class="w-full bg-slate-600 text-white py-2 rounded-lg hover:bg-slate-700 transition-colors duration-200">התנתק</button>
+            <button id="logout-from-expired" class="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 rounded-xl hover:from-gray-600 hover:to-gray-700 font-semibold transition-all hover:scale-105">
+                🚪 התנתק
+            </button>
         </div>
     </div>
 
-    <!-- Toast Notification -->
+    <!-- Enhanced Toast -->
     <div id="toast" class="toast no-print"></div>
 
-    <!-- Custom Alert Modal -->
+    <!-- Enhanced Custom Alert Modal -->
     <div id="custom-alert-modal" class="modal-overlay hidden">
-        <div class="modal-content !bg-slate-800 !border !border-slate-700 !text-slate-200">
-            <h3 id="custom-alert-title" class="modal-title !text-white">הודעה</h3>
-            <p id="custom-alert-body" class="modal-body !text-slate-300"></p>
-            <div class="modal-actions !justify-center">
-                <button id="custom-alert-ok-btn" class="modal-button modal-button-ok !bg-blue-600 hover:!bg-blue-700">אישור</button>
+        <div class="modal-content">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 id="custom-alert-title" class="modal-title">💬 הודעה</h3>
+            </div>
+            <p id="custom-alert-body" class="modal-body text-center"></p>
+            <div class="modal-actions justify-center">
+                <button id="custom-alert-ok-btn" class="modal-button modal-button-ok">✅ אישור</button>
             </div>
         </div>
     </div>
 
-    <!-- Custom Confirm Modal -->
+    <!-- Enhanced Custom Confirm Modal -->
     <div id="custom-confirm-modal" class="modal-overlay hidden">
-        <div class="modal-content !bg-slate-800 !border !border-slate-700 !text-slate-200">
-            <h3 id="custom-confirm-title" class="modal-title !text-white">אישור פעולה</h3>
-            <p id="custom-confirm-body" class="modal-body !text-slate-300"></p>
-            <div class="modal-actions !justify-center">
-                <button id="custom-confirm-cancel-btn" class="modal-button modal-button-cancel !bg-slate-700 hover:!bg-slate-600 !text-slate-200">ביטול</button>
-                <button id="custom-confirm-ok-btn" class="modal-button modal-button-confirm !bg-blue-600 hover:!bg-blue-700">אישור</button>
+        <div class="modal-content">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 id="custom-confirm-title" class="modal-title">❓ אישור פעולה</h3>
+            </div>
+            <p id="custom-confirm-body" class="modal-body text-center"></p>
+            <div class="modal-actions justify-center">
+                <button id="custom-confirm-cancel-btn" class="modal-button modal-button-cancel">❌ ביטול</button>
+                <button id="custom-confirm-ok-btn" class="modal-button modal-button-confirm">✅ אישור</button>
             </div>
         </div>
     </div>
