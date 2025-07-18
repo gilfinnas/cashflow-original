@@ -247,6 +247,13 @@
         </div>
 
         <div class="hidden lg:block bg-slate-800/60 rounded-xl shadow-lg overflow-hidden main-table-container relative no-print border border-slate-700">
+            <!-- START: Floating Categories Toggle Button -->
+            <button id="floating-categories-toggle" title="תצוגת קטגוריות מרחפות" class="floating-categories-toggle">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+                קטגוריות
+            </button>
             <!-- START: Fullscreen Button -->
             <button id="toggle-fullscreen-btn" title="הצג מסך מלא" class="absolute top-4 left-4 z-20 p-2 bg-slate-700 rounded-full hover:bg-slate-600 text-slate-300 transition-colors duration-200">
                 <svg id="expand-icon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -603,5 +610,17 @@
     </div>
 
     <script type="module" src="app.js"></script>
+    
+    <!-- Apple Vision Pro Style Floating Category Interface -->
+    <div id="category-floating-view" class="category-floating-view">
+        <button id="floating-view-close" class="floating-view-close" title="סגור תצוגת קטגוריות">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+        <div id="floating-categories-container" class="floating-categories-container">
+            <!-- Category cards will be dynamically generated here -->
+        </div>
+    </div>
 </body>
 </html>

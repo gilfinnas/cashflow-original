@@ -262,6 +262,12 @@ const chatInput = document.getElementById("chat-input")
 const chatSendBtn = document.getElementById("chat-send-btn")
 const chatHistory = []
 
+// NEW: Floating Categories Elements
+const floatingCategoriesToggle = document.getElementById('floating-categories-toggle');
+const categoryFloatingView = document.getElementById('category-floating-view');
+const floatingViewClose = document.getElementById('floating-view-close');
+const floatingCategoriesContainer = document.getElementById('floating-categories-container');
+
 // NEW: Category Editor Elements
 const editCategoriesBtn = document.getElementById("edit-categories-btn")
 const categoryEditorModal = document.getElementById("category-editor-modal")
@@ -2313,6 +2319,239 @@ function updateDailyGapAlerts(gapDays) {
   })
 }
 
+// --- Apple Vision Pro Style Floating Categories Functions ---
+
+// Show floating categories view
+function showFloatingCategories() {
+  try {
+    renderFloatingCategories();
+    categoryFloatingView.classList.add('visible');
+    document.body.style.overflow = 'hidden';
+  } catch (error) {
+    console.error("Error showing floating categories:", error);
+    showToast("שגיאה בהצגת תצוגת הקטגוריות");
+  }
+}
+
+// Hide floating categories view
+function hideFloatingCategories() {
+  try {
+    categoryFloatingView.classList.remove('visible');
+    document.body.style.overflow = '';
+    // Clear the container after animation completes
+    setTimeout(() => {
+      if (!categoryFloatingView.classList.contains('visible')) {
+        floatingCategoriesContainer.innerHTML = '';
+      }
+    }, 500);
+  } catch (error) {
+    console.error("Error hiding floating categories:", error);
+  }
+}
+
+// Render floating category cards
+function renderFloatingCategories() {
+  try {
+    if (!userCategories || Object.keys(userCategories).length === 0) {
+      return;
+    }
+
+    floatingCategoriesContainer.innerHTML = '';
+    const businessType = cashflowData.vatSettings?.businessType;
+
+    // Create category cards with staggered animation
+    Object.entries(userCategories).forEach(([groupName, groupDetails], index) => {
+      // Skip categories not relevant to business type or hidden
+      if (groupName === "הכנסות פטורות ממע'מ" && !cashflowData.vatSettings?.hasExemptIncome) return;
+      if (groupDetails.vatRelated && businessType === "exempt") return;
+
+      const card = document.createElement('div');
+      card.className = 'floating-category-card';
+      card.dataset.categoryGroup = groupName;
+      
+      // Calculate category statistics
+      const stats = calculateCategoryStats(groupName, groupDetails);
+      
+      // Get category icon based on type
+      const iconHtml = getCategoryIcon(groupName);
+      
+      card.innerHTML = `
+        <div class="floating-category-header">
+          <h3 class="floating-category-title">${groupName}</h3>
+          <div class="floating-category-icon" style="background-color: ${groupDetails.hex}20; border-color: ${groupDetails.hex}40; color: ${groupDetails.hex};">
+            ${iconHtml}
+          </div>
+        </div>
+        <div class="floating-category-content">
+          ${renderCategoryItems(groupDetails.items, businessType)}
+        </div>
+        <div class="floating-category-stats">
+          <span class="floating-category-total">${formatCurrency(stats.total)}</span>
+          <span class="floating-category-items-count">${stats.itemsCount} פריטים</span>
+        </div>
+      `;
+
+      // Add click handler to open category in fullscreen
+      card.addEventListener('click', () => {
+        hideFloatingCategories();
+        setTimeout(() => {
+          openCategoryInFullscreen(groupName);
+        }, 300);
+      });
+
+      floatingCategoriesContainer.appendChild(card);
+
+      // Staggered animation
+      setTimeout(() => {
+        card.classList.add('visible');
+      }, index * 100);
+    });
+  } catch (error) {
+    console.error("Error rendering floating categories:", error);
+    showToast("שגיאה בעיבוד הקטגוריות");
+  }
+}
+
+// Calculate statistics for a category group
+function calculateCategoryStats(groupName, groupDetails) {
+  try {
+    let total = 0;
+    let itemsCount = 0;
+    const businessType = cashflowData.vatSettings?.businessType;
+    const monthData = cashflowData.years?.[currentYear]?.[currentMonthIndex]?.categories || {};
+
+    Object.entries(groupDetails.items).forEach(([catKey, catDetails]) => {
+      // Skip items not relevant to business type
+      if (catDetails.businessTypes && !catDetails.businessTypes.includes(businessType)) {
+        return;
+      }
+      
+      itemsCount++;
+      const categoryData = monthData[catKey] || [];
+      const categoryTotal = categoryData.reduce((sum, value) => sum + (Number.parseFloat(value) || 0), 0);
+      total += categoryTotal;
+    });
+
+    return { total, itemsCount };
+  } catch (error) {
+    console.error("Error calculating category stats:", error);
+    return { total: 0, itemsCount: 0 };
+  }
+}
+
+// Get icon HTML for category
+function getCategoryIcon(groupName) {
+  const icons = {
+    'הכנסות': '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" /></svg>',
+    'הכנסות פטורות ממע\'מ': '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>',
+    'ספקים': '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" /></svg>',
+    'הוצאות משתנות': '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>',
+    'הוצאות עם הכרה חלקית במע\'מ': '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>',
+    'הלוואות': '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>',
+    'הוצאות קבועות': '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>',
+    'תשלומים ומיסים': '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>',
+    'הוצאות בלתי צפויות': '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>'
+  };
+  
+  return icons[groupName] || '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>';
+}
+
+// Render category items preview
+function renderCategoryItems(items, businessType) {
+  try {
+    const monthData = cashflowData.years?.[currentYear]?.[currentMonthIndex] || {};
+    const customNames = monthData.customNames || {};
+    const categories = monthData.categories || {};
+    
+    let itemsHtml = '';
+    let displayCount = 0;
+    const maxDisplay = 3; // Show max 3 items as preview
+    
+    Object.entries(items).forEach(([catKey, catDetails]) => {
+      // Skip items not relevant to business type
+      if (catDetails.businessTypes && !catDetails.businessTypes.includes(businessType)) {
+        return;
+      }
+      
+      if (displayCount >= maxDisplay) return;
+      
+      const displayName = customNames[catKey] || catDetails.name || catDetails.placeholder || 'ללא שם';
+      const categoryData = categories[catKey] || [];
+      const total = categoryData.reduce((sum, value) => sum + (Number.parseFloat(value) || 0), 0);
+      
+      itemsHtml += `
+        <div class="floating-category-item">
+          <span>${displayName}</span>
+          ${total > 0 ? `<span style="float: left; font-weight: 600; color: #3b82f6;">${formatCurrency(total)}</span>` : ''}
+        </div>
+      `;
+      displayCount++;
+    });
+    
+    const totalItems = Object.keys(items).filter(catKey => {
+      const catDetails = items[catKey];
+      return !catDetails.businessTypes || catDetails.businessTypes.includes(businessType);
+    }).length;
+    
+    if (totalItems > maxDisplay) {
+      itemsHtml += `<div class="floating-category-item" style="opacity: 0.6; font-style: italic;">ועוד ${totalItems - maxDisplay} פריטים...</div>`;
+    }
+    
+    return itemsHtml || '<div class="floating-category-item" style="opacity: 0.6;">אין פריטים להצגה</div>';
+  } catch (error) {
+    console.error("Error rendering category items:", error);
+    return '<div class="floating-category-item" style="opacity: 0.6;">שגיאה בטעינת פריטים</div>';
+  }
+}
+
+// Open specific category in fullscreen mode
+function openCategoryInFullscreen(groupName) {
+  try {
+    // First ensure we're showing the correct table view
+    renderApp();
+    
+    // Find the category group in the table and scroll to it
+    setTimeout(() => {
+      const categoryElements = document.querySelectorAll('tr.group-header-row');
+      let targetElement = null;
+      
+      categoryElements.forEach(element => {
+        if (element.textContent.includes(groupName)) {
+          targetElement = element;
+        }
+      });
+      
+      if (targetElement) {
+        // Scroll to the category
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Highlight the category group briefly
+        const originalBg = targetElement.style.backgroundColor;
+        targetElement.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+        targetElement.style.transition = 'background-color 0.3s ease';
+        
+        setTimeout(() => {
+          targetElement.style.backgroundColor = originalBg;
+        }, 2000);
+      }
+      
+      // Enter fullscreen mode
+      setTimeout(() => {
+        const fullscreenBtn = document.getElementById('toggle-fullscreen-btn');
+        if (fullscreenBtn && !mainTableContainer.classList.contains('fullscreen')) {
+          fullscreenBtn.click();
+        }
+      }, 500);
+      
+    }, 100);
+    
+    showToast(`נפתח ${groupName} למסך מלא`);
+  } catch (error) {
+    console.error("Error opening category in fullscreen:", error);
+    showToast("שגיאה בפתיחת הקטגוריה");
+  }
+}
+
 // --- Functions for category management in settings ---
 
 // Open category editor modal
@@ -2967,6 +3206,31 @@ async function getAIResponse(userQuestion) {
     chatSendBtn.disabled = false
   }
 }
+
+// --- Floating Categories Event Listeners ---
+if (floatingCategoriesToggle) {
+  floatingCategoriesToggle.addEventListener('click', showFloatingCategories);
+}
+
+if (floatingViewClose) {
+  floatingViewClose.addEventListener('click', hideFloatingCategories);
+}
+
+// Close floating view when clicking outside cards
+if (categoryFloatingView) {
+  categoryFloatingView.addEventListener('click', (e) => {
+    if (e.target === categoryFloatingView) {
+      hideFloatingCategories();
+    }
+  });
+}
+
+// Close floating view with Escape key
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && categoryFloatingView && categoryFloatingView.classList.contains('visible')) {
+    hideFloatingCategories();
+  }
+});
 
 // --- Fullscreen Feature Listener (with scroll restoration) ---
 let savedScrollPosition = { top: 0, left: 0 }; // Variable to store scroll position
